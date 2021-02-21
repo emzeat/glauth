@@ -350,8 +350,9 @@ func handleConfig(cfg config.Config) (*config.Config, error) {
 	case "config":
 	case "ldap":
 	case "owncloud":
+	case "pam":
 	default:
-		return &cfg, fmt.Errorf("invalid backend %s - must be 'config', 'ldap' or 'owncloud", cfg.Backend.Datastore)
+		return &cfg, fmt.Errorf("invalid backend %s - must be 'config', 'ldap', 'pam' or 'owncloud", cfg.Backend.Datastore)
 	}
 	return &cfg, nil
 }

@@ -51,6 +51,11 @@ func NewServer(opts ...Option) (*LdapSvc, error) {
 			handler.Logger(s.log),
 			handler.Config(s.c),
 		)
+	case "pam":
+		h = handler.NewPamHandler(
+			handler.Logger(s.log),
+			handler.Config(s.c),
+		)
 	case "config":
 		h = handler.NewConfigHandler(
 			handler.Logger(s.log),
@@ -58,7 +63,7 @@ func NewServer(opts ...Option) (*LdapSvc, error) {
 			handler.YubiAuth(s.yubiAuth),
 		)
 	default:
-		return nil, fmt.Errorf("unsupported backend %s - must be 'config', 'ldap' or 'owncloud'", s.c.Backend.Datastore)
+		return nil, fmt.Errorf("unsupported backend %s - must be 'config', 'ldap', 'pam' or 'owncloud'", s.c.Backend.Datastore)
 	}
 	s.log.V(3).Info("Using backend", "datastore", s.c.Backend.Datastore)
 	s.l.BindFunc("", h)
