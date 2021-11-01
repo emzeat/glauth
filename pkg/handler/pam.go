@@ -190,7 +190,7 @@ func (h pamHandler) Search(bindDN string, searchReq ldap.SearchRequest, conn net
 	bindDN = strings.ToLower(bindDN)
 	baseDN := strings.ToLower("," + h.cfg.Backend.BaseDN)
 	searchBaseDN := strings.ToLower(searchReq.BaseDN)
-	h.log.V(6).Info("Search request", "binddn", bindDN, "basedn", baseDN, "src", conn.RemoteAddr(), "filter", searchReq.Filter)
+	h.log.V(6).Info("Search request", "bindDN", bindDN, "baseDN", baseDN, "searchBaseDN", searchBaseDN, "src", conn.RemoteAddr(), "filter", searchReq.Filter)
 	stats.Frontend.Add("search_reqs", 1)
 
 	// validate the user is authenticated and has appropriate access
@@ -200,7 +200,7 @@ func (h pamHandler) Search(bindDN string, searchReq ldap.SearchRequest, conn net
 	if !strings.HasSuffix(bindDN, baseDN) {
 		return ldap.ServerSearchResult{ResultCode: ldap.LDAPResultInsufficientAccessRights}, fmt.Errorf("Search Error: BindDN %s not in our BaseDN %s", bindDN, h.cfg.Backend.BaseDN)
 	}
-	if !strings.HasSuffix(searchBaseDN, h.cfg.Backend.BaseDN) {
+	if len(searchBaseDN) > 0 && !strings.HasSuffix(searchBaseDN, h.cfg.Backend.BaseDN) {
 		return ldap.ServerSearchResult{ResultCode: ldap.LDAPResultInsufficientAccessRights}, fmt.Errorf("Search Error: search BaseDN %s is not in our BaseDN %s", searchBaseDN, h.cfg.Backend.BaseDN)
 	}
 	// return all users known in the system - the LDAP library will filter results for us
