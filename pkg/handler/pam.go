@@ -330,17 +330,17 @@ func (h pamHandler) Search(bindDN string, searchReq ldap.SearchRequest, conn net
 	return ldap.ServerSearchResult{Entries: entries, Referrals: []string{}, Controls: []ldap.Control{}, ResultCode: ldap.LDAPResultSuccess}, nil
 }
 
-// Add is not yet supported for the owncloud backend
+// Add is not yet supported for the pam backend
 func (h pamHandler) Add(boundDN string, req ldap.AddRequest, conn net.Conn) (result ldap.LDAPResultCode, err error) {
 	return ldap.LDAPResultInsufficientAccessRights, nil
 }
 
-// Modify is not yet supported for the owncloud backend
+// Modify is not yet supported for the pam backend
 func (h pamHandler) Modify(boundDN string, req ldap.ModifyRequest, conn net.Conn) (result ldap.LDAPResultCode, err error) {
 	return ldap.LDAPResultInsufficientAccessRights, nil
 }
 
-// Delete is not yet supported for the owncloud backend
+// Delete is not yet supported for the pam backend
 func (h pamHandler) Delete(boundDN string, deleteDN string, conn net.Conn) (result ldap.LDAPResultCode, err error) {
 	return ldap.LDAPResultInsufficientAccessRights, nil
 }
