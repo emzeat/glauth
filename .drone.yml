@@ -1,0 +1,38 @@
+---
+kind: pipeline
+type: docker
+name: linux-amd64
+
+steps:
+- name: build
+  image: ${MZ_DOCKER_REGISTRY}/golang:latest
+  environment:
+    # disable the configured git mirrors, this is not used frequently enough
+    # redirect to our local fork only
+    GIT_CONFIG_COUNT: 1
+    GIT_CONFIG_KEY_0: url.https://github.com/emzeat.insteadOf
+    GIT_CONFIG_VALUE_0: https://github.com/glauth
+    PATH: /usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  commands:
+    # Install deps
+    - ls -lh *
+    # Build and copy final result
+    - VERBOSE=1 make -C v2 linuxamd64 plugins_linux_amd64
+    - ls -lh v2/
+    - ls -lh v2/bin/*
+    - cp ./v2/bin/linuxamd64/glauth glauth
+    - cp ./v2/bin/linuxamd64/pam.so glauth_pam.so
+    - cp ./v2/bin/linuxamd64/sqlite.so glauth_sqlite.so
+    # Check the result is runnable
+    - ./glauth --version
+
+- name: upload
+  image: plugins/s3
+  settings:
+    bucket: ${MZ_CI_BUCKET}
+    source: glauth*
+    target: /glauth/${DRONE_BUILD_NUMBER}/linux-amd64
+    path_style: true
+    access_key: ${MZ_S3_ACCESS_KEY}
+    secret_key: ${MZ_S3_SECRET_KEY}
+    endpoint: ${MZ_S3_ENDPOINT}
